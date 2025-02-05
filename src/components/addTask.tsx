@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { TaskNew } from "@/types";
+import * as Action from "@/actions";
 
 const AddTask = () => {
   const [title, setTitle] = useState("");
@@ -12,14 +12,11 @@ const AddTask = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !description || !expiryDate || !expiryTime) return;
-    const task: TaskNew = {
-      title,
-      description,
-      expiry: new Date(`${expiryDate} ${expiryTime}`),
-    };
-
-    console.log(task);
-    // create(task);
+    Action.addTask(title, description, new Date(`${expiryDate} ${expiryTime}`).toString());
+    setTitle("");
+    setDescription("");
+    setExpiryDate("");
+    setExpiryTime("");
   };
 
   return (
