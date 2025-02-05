@@ -1,5 +1,5 @@
-import { Task } from "@/types";
 import { useState } from "react";
+import { Task } from "@/types";
 
 const TaskItem = ({
   task,
@@ -14,21 +14,10 @@ const TaskItem = ({
 }) => {
   const [isCompleted, setIsCompleted] = useState(task.isCompleted);
   const [view, setView] = useState<"view" | "edit">("view");
-  const [ttask, setTTask] = useState<Task>(task);
 
   const handleComplete = () => {
     setIsCompleted(true);
     onComplete(task._id);
-  };
-
-  const handleSave = () => {
-    onEdit(ttask);
-    setView("view");
-  };
-
-  const handleCancel = () => {
-    setTTask(task);
-    setView("view");
   };
 
   const View = () => {
@@ -66,6 +55,19 @@ const TaskItem = ({
   };
 
   const Edit = () => {
+    const [ttask, setTTask] = useState<Task>({ ...task });
+
+    const handleSave = () => {
+      if (!ttask) return;
+      onEdit(ttask);
+      setView("view");
+    };
+
+    const handleCancel = () => {
+      setTTask(task);
+      setView("view");
+    };
+
     return (
       <>
         <input
@@ -81,7 +83,9 @@ const TaskItem = ({
         />
         <input
           type="datetime-local"
-          value={ttask.expiry}
+          value={new Date(new Date(ttask.expiry).getTime() - new Date(ttask.expiry).getTimezoneOffset() * 60000)
+            .toISOString()
+            .slice(0, -1)}
           onChange={(e) => setTTask({ ...ttask, expiry: e.target.value })}
           className="w-full p-2 mt-2 text-white bg-gray-700 border border-gray-500 rounded focus:outline-none"
         />
